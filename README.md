@@ -47,7 +47,7 @@ A lightweight, modern, lag-free Minecraft marriage and relationship plugin built
 
 ## Installation
 
-1. Download the latest `ClarityMarriage-1.1.0.jar` from the [Releases](https://github.com/harukiyu/ClarityMarriage/releases) tab.
+1. Download the latest `ClarityMarriage-1.1.0.jar` from the [Releases](https://github.com/fitrahrh/ClarityMarriage/releases) tab.
 2. Place the JAR file into your server's `plugins` folder.
 3. Ensure [Vault](https://www.spigotmc.org/resources/vault.34315/) and an economy provider are installed if you wish to use the Couple Bank feature.
 4. Restart your server to generate the default configuration files.
@@ -291,7 +291,7 @@ Players can type `/marry love` or `/marry love tips` in-game at any time to insp
 
 ```bash
 # Clone the repository
-git clone https://github.com/harukiyu/ClarityMarriage.git
+git clone https://github.com/fitrahrh/ClarityMarriage.git
 cd ClarityMarriage
 
 # Build with Maven
@@ -306,7 +306,7 @@ mvn clean package
 ## Support
 
 For bug reports, feature requests, or technical questions:
-- Check existing [GitHub Issues](https://github.com/harukiyu/ClarityMarriage/issues).
+- Check existing [GitHub Issues](https://github.com/fitrahrh/ClarityMarriage/issues).
 - Open a new issue with complete server version, Java version, and console logs.
 
 ---
