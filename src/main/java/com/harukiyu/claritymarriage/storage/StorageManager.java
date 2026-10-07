@@ -2,6 +2,7 @@ package com.harukiyu.claritymarriage.storage;
 
 import com.harukiyu.claritymarriage.ClarityMarriage;
 import com.harukiyu.claritymarriage.models.Marriage;
+import com.harukiyu.claritymarriage.models.PlayerProfile;
 
 import java.util.Collection;
 import java.util.List;
@@ -67,5 +68,17 @@ public class StorageManager {
 
     public CompletableFuture<Void> saveAll(Collection<Marriage> marriages) {
         return activeStorage.saveAll(marriages);
+    }
+
+    public CompletableFuture<List<PlayerProfile>> loadAllProfiles() {
+        return activeStorage.loadAllProfiles();
+    }
+
+    public CompletableFuture<Void> saveProfile(PlayerProfile profile) {
+        return activeStorage.saveProfile(profile);
+    }
+
+    public CompletableFuture<Void> saveAllProfiles(Collection<PlayerProfile> profiles) {
+        return activeStorage.saveAllProfiles(profiles);
     }
 }

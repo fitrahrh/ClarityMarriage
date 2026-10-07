@@ -23,6 +23,14 @@ marriage:
   allow-pvp: false
   # Notify partner when their spouse logs in
   partner-join-notify: true
+  # Cooldown in seconds before a player can remarry or propose after divorcing (default: 86400s = 24h)
+  divorce-cooldown-seconds: 86400
+  # Whether players must choose a gender before marrying or proposing
+  require-gender: true
+  # Whether players are allowed to change their gender after picking it
+  allow-gender-change: true
+  # Whether players of the same gender are allowed to marry (male-male, female-female)
+  allow-same-sex: true
 
 # Teleportation (/marry tp & /marry home)
 teleport:
@@ -58,3 +66,47 @@ effects:
     teleport-success: "ENTITY_ENDERMAN_TELEPORT"
     gift-success: "ENTITY_PLAYER_LEVELUP"
     divorce: "BLOCK_BEACON_DEACTIVATE"
+    bank-upgrade: "UI_TOAST_CHALLENGE_COMPLETE"
+    love-exp-gain: "ENTITY_EXPERIENCE_ORB_PICKUP"
+    kiss: "ENTITY_VILLAGER_YES"
+
+# Marriage Bank & Vault Settings (/marry bank)
+bank:
+  enabled: true
+  # Initial/Default deposit limit (500,000)
+  default-limit: 500000.0
+  # Increment added to deposit limit on every upgrade (500,000)
+  limit-per-level: 500000.0
+  # Base EXP Love required for first upgrade
+  upgrade-cost-base: 100
+  # Additional EXP Love required per bank level
+  upgrade-cost-per-level: 50
+
+# EXP Love System
+love:
+  # Proximity distance in blocks (default: 5 blocks)
+  proximity-distance: 5.0
+  # Playtime EXP Love: Awarded when partners stay within 5 blocks
+  playtime:
+    # Interval in seconds (default: 600 seconds = 10 minutes)
+    interval-seconds: 600
+    exp: 50
+  # Mob kills within proximity
+  mob-kill:
+    enabled: true
+    exp: 3
+    boss-exp: 50
+  # Additional recommended ways to earn EXP Love
+  mining:
+    enabled: true
+    exp: 2
+  fishing:
+    enabled: true
+    exp: 2
+  sleeping:
+    enabled: true
+    exp: 25
+  kiss:
+    enabled: true
+    exp: 10
+    cooldown-seconds: 1800 # 30 minutes

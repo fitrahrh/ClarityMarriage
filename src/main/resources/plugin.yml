@@ -6,6 +6,7 @@ author: Harukiyu
 description: Lightweight, modern, and lag-free Minecraft marriage plugin for Paper 1.21+
 softdepend:
   - PlaceholderAPI
+  - Vault
 
 commands:
   marry:
@@ -43,6 +44,21 @@ permissions:
     default: true
   claritymarriage.stats:
     description: Allows players to view marriage profiles
+    default: true
+  claritymarriage.check:
+    description: Allows players to view any player's marriage status
+    default: true
+  claritymarriage.gender:
+    description: Allows players to choose their gender
+    default: true
+  claritymarriage.bank:
+    description: Allows players to access couple bank GUI
+    default: true
+  claritymarriage.bank.upgrade:
+    description: Allows players to upgrade bank deposit limit
+    default: true
+  claritymarriage.love:
+    description: Allows players to view EXP Love guides and stats
     default: true
   claritymarriage.admin:
     description: Allows access to administrative marriage commands

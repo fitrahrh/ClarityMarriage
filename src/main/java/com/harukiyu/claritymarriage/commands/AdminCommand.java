@@ -1,6 +1,7 @@
 package com.harukiyu.claritymarriage.commands;
 
 import com.harukiyu.claritymarriage.ClarityMarriage;
+import com.harukiyu.claritymarriage.models.Gender;
 import com.harukiyu.claritymarriage.models.Marriage;
 import com.harukiyu.claritymarriage.utils.TimeUtil;
 import org.bukkit.Bukkit;
@@ -48,6 +49,8 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
             case "reload" -> handleReload(sender);
             case "forcemarry" -> handleForceMarry(sender, args);
             case "forcedivorce" -> handleForceDivorce(sender, args);
+            case "cleardivorce" -> handleClearDivorce(sender, args);
+            case "setgender" -> handleSetGender(sender, args);
             case "info" -> handleInfo(sender, args);
             default -> sendAdminHelp(sender);
         }
@@ -58,6 +61,7 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
     private void handleReload(CommandSender sender) {
         plugin.getConfigManager().load();
         plugin.getLanguageManager().load();
+        plugin.getBankGui().load();
         plugin.getLanguageManager().sendMessage(sender, "admin-reload");
     }
 
@@ -143,12 +147,47 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
         );
     }
 
+    private void handleClearDivorce(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage("§cUsage: /claritymarriage cleardivorce <player>");
+            return;
+        }
+
+        OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
+        if (target.getName() == null) {
+            plugin.getLanguageManager().sendMessage(sender, "player-not-found", "target", args[1]);
+            return;
+        }
+
+        plugin.getProfileManager().clearDivorceCooldown(target.getUniqueId());
+        sender.sendMessage("§aDivorce cooldown cleared for §e" + target.getName() + "§a.");
+    }
+
+    private void handleSetGender(CommandSender sender, String[] args) {
+        if (args.length < 3) {
+            sender.sendMessage("§cUsage: /claritymarriage setgender <player> <male/female/none>");
+            return;
+        }
+
+        OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
+        if (target.getName() == null) {
+            plugin.getLanguageManager().sendMessage(sender, "player-not-found", "target", args[1]);
+            return;
+        }
+
+        Gender gender = Gender.fromString(args[2]);
+        plugin.getProfileManager().setGender(target.getUniqueId(), gender);
+        sender.sendMessage("§aGender for §e" + target.getName() + "§a set to §e" + gender.getDisplayName() + " " + gender.getIcon() + "§a.");
+    }
+
     private void sendAdminHelp(CommandSender sender) {
         plugin.getLanguageManager().sendRawMessage(sender, "admin-help-header");
         plugin.getLanguageManager().sendRawMessage(sender, "admin-help-reload");
         plugin.getLanguageManager().sendRawMessage(sender, "admin-help-marry");
         plugin.getLanguageManager().sendRawMessage(sender, "admin-help-divorce");
         plugin.getLanguageManager().sendRawMessage(sender, "admin-help-info");
+        sender.sendMessage("§e/cmarry cleardivorce <player> §7- §fReset player's divorce cooldown");
+        sender.sendMessage("§e/cmarry setgender <player> <gender> §7- §fSet player's gender (male/female/none)");
         plugin.getLanguageManager().sendRawMessage(sender, "admin-help-footer");
     }
 
@@ -162,7 +201,7 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             String current = args[0].toLowerCase(Locale.ROOT);
-            for (String sub : List.of("reload", "forcemarry", "forcedivorce", "info", "help")) {
+            for (String sub : List.of("reload", "forcemarry", "forcedivorce", "cleardivorce", "setgender", "info", "help")) {
                 if (sub.startsWith(current)) {
                     completions.add(sub);
                 }
@@ -170,14 +209,34 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
             return completions;
         }
 
-        if (args.length == 2 || args.length == 3) {
-            String current = args[args.length - 1].toLowerCase(Locale.ROOT);
+        if (args.length == 2) {
+            String current = args[1].toLowerCase(Locale.ROOT);
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (p.getName().toLowerCase(Locale.ROOT).startsWith(current)) {
                     completions.add(p.getName());
                 }
             }
             return completions;
+        }
+
+        if (args.length == 3) {
+            String sub = args[0].toLowerCase(Locale.ROOT);
+            String current = args[2].toLowerCase(Locale.ROOT);
+            if ("setgender".equals(sub)) {
+                for (String g : List.of("male", "female", "none")) {
+                    if (g.startsWith(current)) {
+                        completions.add(g);
+                    }
+                }
+                return completions;
+            } else if ("forcemarry".equals(sub)) {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    if (p.getName().toLowerCase(Locale.ROOT).startsWith(current)) {
+                        completions.add(p.getName());
+                    }
+                }
+                return completions;
+            }
         }
 
         return Collections.emptyList();

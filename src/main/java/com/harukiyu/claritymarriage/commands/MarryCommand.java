@@ -1,6 +1,7 @@
 package com.harukiyu.claritymarriage.commands;
 
 import com.harukiyu.claritymarriage.ClarityMarriage;
+import com.harukiyu.claritymarriage.models.Gender;
 import com.harukiyu.claritymarriage.models.Marriage;
 import com.harukiyu.claritymarriage.models.SharedHome;
 import com.harukiyu.claritymarriage.utils.ItemUtil;
@@ -34,6 +35,14 @@ public class MarryCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (args.length > 0) {
+            String sub = args[0].toLowerCase();
+            if (sub.equals("version") || sub.equals("ver") || sub.equals("v")) {
+                handleVersion(sender);
+                return true;
+            }
+        }
+
         if (!(sender instanceof Player player)) {
             plugin.getLanguageManager().sendMessage(sender, "only-players");
             return true;
@@ -54,8 +63,16 @@ public class MarryCommand implements CommandExecutor {
             case "home" -> handleHome(player);
             case "chat" -> handleChat(player, args);
             case "stats" -> handleStats(player, args);
+            case "status", "check" -> handleCheck(player, args);
+            case "gender" -> handleGender(player, args);
             case "gift" -> handleGift(player);
+            case "bank", "gui" -> handleBank(player);
+            case "love", "guide", "exptips" -> handleLove(player);
+            case "deposit" -> handleDeposit(player, args);
+            case "withdraw" -> handleWithdraw(player, args);
+            case "upgrade" -> handleUpgrade(player);
             case "divorce" -> handleDivorce(player, args);
+            case "version", "ver", "v" -> handleVersion(player);
             case "help" -> sendHelp(player);
             default -> handleProposal(player, args[0]);
         }
@@ -229,6 +246,99 @@ public class MarryCommand implements CommandExecutor {
         );
     }
 
+    private void handleGender(Player player, String[] args) {
+        if (!player.hasPermission("claritymarriage.gender")) {
+            plugin.getLanguageManager().sendMessage(player, "no-permission");
+            return;
+        }
+
+        if (args.length < 2) {
+            plugin.getLanguageManager().sendRawMessage(player, "gender-select-prompt");
+            return;
+        }
+
+        Gender gender = Gender.fromString(args[1]);
+        if (gender == Gender.NONE) {
+            plugin.getLanguageManager().sendMessage(player, "gender-invalid");
+            return;
+        }
+
+        if (plugin.getProfileManager().hasGender(player.getUniqueId())
+                && !plugin.getConfigManager().isAllowGenderChange()
+                && !player.hasPermission("claritymarriage.admin")) {
+            plugin.getLanguageManager().sendMessage(player, "gender-change-disabled");
+            return;
+        }
+
+        plugin.getProfileManager().setGender(player.getUniqueId(), gender);
+        plugin.getLanguageManager().sendMessage(player, "gender-set-success",
+                "gender", gender.getDisplayName(),
+                "icon", gender.getFormattedIcon()
+        );
+    }
+
+    private void handleCheck(Player player, String[] args) {
+        if (!player.hasPermission("claritymarriage.check")) {
+            plugin.getLanguageManager().sendMessage(player, "no-permission");
+            return;
+        }
+
+        UUID targetUuid = player.getUniqueId();
+        String targetName = player.getName();
+
+        if (args.length > 1) {
+            OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[1]);
+            if (targetPlayer.getName() != null) {
+                targetUuid = targetPlayer.getUniqueId();
+                targetName = targetPlayer.getName();
+            } else {
+                plugin.getLanguageManager().sendMessage(player, "player-not-found", "target", args[1]);
+                return;
+            }
+        }
+
+        Gender gender = plugin.getProfileManager().getGender(targetUuid);
+        String genderDisplay = gender != Gender.NONE
+                ? gender.getDisplayName() + " " + gender.getFormattedIcon()
+                : "<gray>Not set</gray>";
+
+        Marriage marriage = plugin.getMarriageManager().getMarriage(targetUuid);
+        if (marriage != null) {
+            UUID partnerUuid = marriage.getPartner(targetUuid);
+            OfflinePlayer partner = Bukkit.getOfflinePlayer(partnerUuid);
+            String partnerName = partner.getName() != null ? partner.getName() : "Unknown";
+            Gender partnerGender = plugin.getProfileManager().getGender(partnerUuid);
+            String partnerIcon = partnerGender != Gender.NONE ? partnerGender.getFormattedIcon() : "";
+
+            String weddingDate = TimeUtil.formatDate(marriage.getMarriageDate());
+            String marriedDuration = TimeUtil.formatDuration((System.currentTimeMillis() - marriage.getMarriageDate()) / 1000L);
+            String loveExp = String.valueOf(marriage.getLoveExp());
+
+            plugin.getLanguageManager().sendRawMessage(player, "status-card-married",
+                    "target", targetName,
+                    "gender_display", genderDisplay,
+                    "partner", partnerName,
+                    "partner_icon", partnerIcon,
+                    "date", weddingDate,
+                    "married_time", marriedDuration,
+                    "love_exp", loveExp
+            );
+        } else {
+            String cooldownLine = "";
+            if (plugin.getProfileManager().isInDivorceCooldown(targetUuid)) {
+                long rem = plugin.getProfileManager().getRemainingDivorceCooldownSeconds(targetUuid);
+                cooldownLine = plugin.getLanguageManager().getRaw("status-divorce-cooldown")
+                        .replace("<time>", TimeUtil.formatDuration(rem));
+            }
+
+            plugin.getLanguageManager().sendRawMessage(player, "status-card-single",
+                    "target", targetName,
+                    "gender_display", genderDisplay,
+                    "divorce_cooldown_line", cooldownLine
+            );
+        }
+    }
+
     private void handleGift(Player player) {
         if (!player.hasPermission("claritymarriage.gift")) {
             plugin.getLanguageManager().sendMessage(player, "no-permission");
@@ -326,6 +436,110 @@ public class MarryCommand implements CommandExecutor {
         }
     }
 
+    private void handleBank(Player player) {
+        if (!player.hasPermission("claritymarriage.bank")) {
+            plugin.getLanguageManager().sendMessage(player, "no-permission");
+            return;
+        }
+
+        if (!plugin.getMarriageManager().isMarried(player.getUniqueId())) {
+            plugin.getLanguageManager().sendMessage(player, "not-married");
+            return;
+        }
+
+        plugin.getBankGui().open(player);
+    }
+
+    private void handleLove(Player player) {
+        if (!player.hasPermission("claritymarriage.love")) {
+            plugin.getLanguageManager().sendMessage(player, "no-permission");
+            return;
+        }
+
+        Marriage marriage = plugin.getMarriageManager().getMarriage(player.getUniqueId());
+        long loveExp = marriage != null ? marriage.getLoveExp() : 0L;
+        int bankLevel = marriage != null ? marriage.getBankLevel() : 1;
+        double baseLimit = plugin.getConfigManager().getBankDefaultLimit();
+        double perLevel = plugin.getConfigManager().getBankLimitPerLevel();
+        double limit = marriage != null ? marriage.getBankLimit(baseLimit, perLevel) : baseLimit;
+
+        plugin.getLanguageManager().sendRawMessage(player, "love-guide",
+                "love_exp", String.valueOf(loveExp),
+                "bank_level", String.valueOf(bankLevel),
+                "bank_limit", plugin.getVaultHook().format(limit)
+        );
+    }
+
+    private void handleDeposit(Player player, String[] args) {
+        if (!player.hasPermission("claritymarriage.bank")) {
+            plugin.getLanguageManager().sendMessage(player, "no-permission");
+            return;
+        }
+
+        if (args.length < 2) {
+            handleBank(player);
+            return;
+        }
+
+        try {
+            double amount = Double.parseDouble(args[1].replace(",", "").replace("$", ""));
+            plugin.getBankManager().deposit(player, amount);
+        } catch (NumberFormatException e) {
+            plugin.getLanguageManager().sendMessage(player, "bank-prompt-invalid");
+        }
+    }
+
+    private void handleWithdraw(Player player, String[] args) {
+        if (!player.hasPermission("claritymarriage.bank")) {
+            plugin.getLanguageManager().sendMessage(player, "no-permission");
+            return;
+        }
+
+        if (args.length < 2) {
+            handleBank(player);
+            return;
+        }
+
+        try {
+            double amount = Double.parseDouble(args[1].replace(",", "").replace("$", ""));
+            plugin.getBankManager().withdraw(player, amount);
+        } catch (NumberFormatException e) {
+            plugin.getLanguageManager().sendMessage(player, "bank-prompt-invalid");
+        }
+    }
+
+    private void handleUpgrade(Player player) {
+        if (!player.hasPermission("claritymarriage.bank.upgrade")) {
+            plugin.getLanguageManager().sendMessage(player, "no-permission");
+            return;
+        }
+
+        plugin.getBankManager().upgradeLimit(player);
+    }
+
+    private void handleVersion(CommandSender sender) {
+        String version = plugin.getPluginMeta().getVersion();
+        String author = String.join(", ", plugin.getPluginMeta().getAuthors());
+        if (author.isEmpty()) author = "Harukiyu";
+
+        String rawStorage = plugin.getConfig().getString("storage.type", "SQLITE");
+        String storage = (rawStorage != null ? rawStorage : "SQLITE").toUpperCase(java.util.Locale.ROOT);
+        String vaultStatus = plugin.getVaultHook() != null && plugin.getVaultHook().isAvailable()
+                ? "<green>Active (" + plugin.getVaultHook().getEconomyName() + ")</green>"
+                : "<red>Not Connected</red>";
+
+        boolean hasPapi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
+        String papiStatus = hasPapi ? "<green>Hooked</green>" : "<gray>Not found</gray>";
+
+        plugin.getLanguageManager().sendRawMessage(sender, "version-card",
+                "version", version,
+                "author", author,
+                "storage", storage,
+                "vault_status", vaultStatus,
+                "papi_status", papiStatus
+        );
+    }
+
     private void sendHelp(Player player) {
         plugin.getLanguageManager().sendRawMessage(player, "help-header");
         plugin.getLanguageManager().sendRawMessage(player, "help-marry");
@@ -336,8 +550,13 @@ public class MarryCommand implements CommandExecutor {
         plugin.getLanguageManager().sendRawMessage(player, "help-home");
         plugin.getLanguageManager().sendRawMessage(player, "help-chat");
         plugin.getLanguageManager().sendRawMessage(player, "help-stats");
+        plugin.getLanguageManager().sendRawMessage(player, "help-check");
+        plugin.getLanguageManager().sendRawMessage(player, "help-gender");
         plugin.getLanguageManager().sendRawMessage(player, "help-gift");
+        plugin.getLanguageManager().sendRawMessage(player, "help-bank");
+        plugin.getLanguageManager().sendRawMessage(player, "help-love");
         plugin.getLanguageManager().sendRawMessage(player, "help-divorce");
+        plugin.getLanguageManager().sendRawMessage(player, "help-version");
         plugin.getLanguageManager().sendRawMessage(player, "help-footer");
     }
 }

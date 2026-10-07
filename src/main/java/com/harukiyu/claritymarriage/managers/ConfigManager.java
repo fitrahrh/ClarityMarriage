@@ -19,6 +19,10 @@ public class ConfigManager {
     private boolean broadcastOnDivorce;
     private boolean allowPvp;
     private boolean partnerJoinNotify;
+    private int divorceCooldownSeconds;
+    private boolean requireGender;
+    private boolean allowGenderChange;
+    private boolean allowSameSex;
 
     private int teleportWarmup;
     private int teleportCooldown;
@@ -40,6 +44,32 @@ public class ConfigManager {
     private Sound soundTeleportSuccess;
     private Sound soundGiftSuccess;
     private Sound soundDivorce;
+    private Sound soundBankUpgrade;
+    private Sound soundLoveExpGain;
+    private Sound soundKiss;
+
+    // Bank & EXP Love settings
+    private boolean bankEnabled;
+    private double bankDefaultLimit;
+    private double bankLimitPerLevel;
+    private int bankUpgradeCostBase;
+    private int bankUpgradeCostPerLevel;
+
+    private double loveProximityDistance;
+    private int lovePlaytimeInterval;
+    private int lovePlaytimeExp;
+    private boolean loveMobKillEnabled;
+    private int loveMobKillExp;
+    private int loveBossKillExp;
+    private boolean loveMiningEnabled;
+    private int loveMiningExp;
+    private boolean loveFishingEnabled;
+    private int loveFishingExp;
+    private boolean loveSleepingEnabled;
+    private int loveSleepingExp;
+    private boolean loveKissEnabled;
+    private int loveKissExp;
+    private int loveKissCooldown;
 
     public ConfigManager(ClarityMarriage plugin) {
         this.plugin = plugin;
@@ -56,6 +86,10 @@ public class ConfigManager {
         broadcastOnDivorce = config.getBoolean("marriage.broadcast-on-divorce", false);
         allowPvp = config.getBoolean("marriage.allow-pvp", false);
         partnerJoinNotify = config.getBoolean("marriage.partner-join-notify", true);
+        divorceCooldownSeconds = config.getInt("marriage.divorce-cooldown-seconds", 86400);
+        requireGender = config.getBoolean("marriage.require-gender", true);
+        allowGenderChange = config.getBoolean("marriage.allow-gender-change", true);
+        allowSameSex = config.getBoolean("marriage.allow-same-sex", true);
 
         teleportWarmup = config.getInt("teleport.warmup-seconds", 3);
         teleportCooldown = config.getInt("teleport.cooldown-seconds", 30);
@@ -78,6 +112,38 @@ public class ConfigManager {
         soundTeleportSuccess = parseSound(config.getString("effects.sounds.teleport-success", "ENTITY_ENDERMAN_TELEPORT"), Sound.ENTITY_ENDERMAN_TELEPORT);
         soundGiftSuccess = parseSound(config.getString("effects.sounds.gift-success", "ENTITY_PLAYER_LEVELUP"), Sound.ENTITY_PLAYER_LEVELUP);
         soundDivorce = parseSound(config.getString("effects.sounds.divorce", "BLOCK_BEACON_DEACTIVATE"), Sound.BLOCK_BEACON_DEACTIVATE);
+        soundBankUpgrade = parseSound(config.getString("effects.sounds.bank-upgrade", "UI_TOAST_CHALLENGE_COMPLETE"), Sound.UI_TOAST_CHALLENGE_COMPLETE);
+        soundLoveExpGain = parseSound(config.getString("effects.sounds.love-exp-gain", "ENTITY_EXPERIENCE_ORB_PICKUP"), Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
+        soundKiss = parseSound(config.getString("effects.sounds.kiss", "ENTITY_VILLAGER_YES"), Sound.ENTITY_VILLAGER_YES);
+
+        // Bank settings
+        bankEnabled = config.getBoolean("bank.enabled", true);
+        bankDefaultLimit = config.getDouble("bank.default-limit", 500000.0);
+        bankLimitPerLevel = config.getDouble("bank.limit-per-level", 500000.0);
+        bankUpgradeCostBase = config.getInt("bank.upgrade-cost-base", 100);
+        bankUpgradeCostPerLevel = config.getInt("bank.upgrade-cost-per-level", 50);
+
+        // EXP Love settings
+        loveProximityDistance = config.getDouble("love.proximity-distance", 5.0);
+        lovePlaytimeInterval = config.getInt("love.playtime.interval-seconds", 600);
+        lovePlaytimeExp = config.getInt("love.playtime.exp", 50);
+
+        loveMobKillEnabled = config.getBoolean("love.mob-kill.enabled", true);
+        loveMobKillExp = config.getInt("love.mob-kill.exp", 3);
+        loveBossKillExp = config.getInt("love.mob-kill.boss-exp", 50);
+
+        loveMiningEnabled = config.getBoolean("love.mining.enabled", true);
+        loveMiningExp = config.getInt("love.mining.exp", 2);
+
+        loveFishingEnabled = config.getBoolean("love.fishing.enabled", true);
+        loveFishingExp = config.getInt("love.fishing.exp", 2);
+
+        loveSleepingEnabled = config.getBoolean("love.sleeping.enabled", true);
+        loveSleepingExp = config.getInt("love.sleeping.exp", 25);
+
+        loveKissEnabled = config.getBoolean("love.kiss.enabled", true);
+        loveKissExp = config.getInt("love.kiss.exp", 10);
+        loveKissCooldown = config.getInt("love.kiss.cooldown-seconds", 1800);
     }
 
     @SuppressWarnings("deprecation")
@@ -97,6 +163,10 @@ public class ConfigManager {
     public boolean isBroadcastOnDivorce() { return broadcastOnDivorce; }
     public boolean isAllowPvp() { return allowPvp; }
     public boolean isPartnerJoinNotify() { return partnerJoinNotify; }
+    public int getDivorceCooldownSeconds() { return divorceCooldownSeconds; }
+    public boolean isRequireGender() { return requireGender; }
+    public boolean isAllowGenderChange() { return allowGenderChange; }
+    public boolean isAllowSameSex() { return allowSameSex; }
 
     public int getTeleportWarmup() { return teleportWarmup; }
     public int getTeleportCooldown() { return teleportCooldown; }
@@ -118,4 +188,35 @@ public class ConfigManager {
     public Sound getSoundTeleportSuccess() { return soundTeleportSuccess; }
     public Sound getSoundGiftSuccess() { return soundGiftSuccess; }
     public Sound getSoundDivorce() { return soundDivorce; }
+    public Sound getSoundBankUpgrade() { return soundBankUpgrade; }
+    public Sound getSoundLoveExpGain() { return soundLoveExpGain; }
+    public Sound getSoundKiss() { return soundKiss; }
+
+    // Bank getters
+    public boolean isBankEnabled() { return bankEnabled; }
+    public double getBankDefaultLimit() { return bankDefaultLimit; }
+    public double getBankLimitPerLevel() { return bankLimitPerLevel; }
+    public int getBankUpgradeCostBase() { return bankUpgradeCostBase; }
+    public int getBankUpgradeCostPerLevel() { return bankUpgradeCostPerLevel; }
+
+    public long getUpgradeCost(int currentLevel) {
+        return (long) bankUpgradeCostBase + ((long) (currentLevel - 1) * bankUpgradeCostPerLevel);
+    }
+
+    // EXP Love getters
+    public double getLoveProximityDistance() { return loveProximityDistance; }
+    public int getLovePlaytimeInterval() { return lovePlaytimeInterval; }
+    public int getLovePlaytimeExp() { return lovePlaytimeExp; }
+    public boolean isLoveMobKillEnabled() { return loveMobKillEnabled; }
+    public int getLoveMobKillExp() { return loveMobKillExp; }
+    public int getLoveBossKillExp() { return loveBossKillExp; }
+    public boolean isLoveMiningEnabled() { return loveMiningEnabled; }
+    public int getLoveMiningExp() { return loveMiningExp; }
+    public boolean isLoveFishingEnabled() { return loveFishingEnabled; }
+    public int getLoveFishingExp() { return loveFishingExp; }
+    public boolean isLoveSleepingEnabled() { return loveSleepingEnabled; }
+    public int getLoveSleepingExp() { return loveSleepingExp; }
+    public boolean isLoveKissEnabled() { return loveKissEnabled; }
+    public int getLoveKissExp() { return loveKissExp; }
+    public int getLoveKissCooldown() { return loveKissCooldown; }
 }

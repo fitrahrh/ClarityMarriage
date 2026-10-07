@@ -127,6 +127,13 @@ public class MarriageManager {
         plugin.getChatManager().disableChat(playerUuid);
         plugin.getChatManager().disableChat(partnerUuid);
 
+        // Apply divorce cooldown
+        int cooldownSeconds = plugin.getConfigManager().getDivorceCooldownSeconds();
+        if (cooldownSeconds > 0 && plugin.getProfileManager() != null) {
+            plugin.getProfileManager().setDivorceCooldown(playerUuid, cooldownSeconds);
+            plugin.getProfileManager().setDivorceCooldown(partnerUuid, cooldownSeconds);
+        }
+
         Player player = Bukkit.getPlayer(playerUuid);
         Player partner = Bukkit.getPlayer(partnerUuid);
 

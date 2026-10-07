@@ -97,8 +97,57 @@ help-home: "<yellow>/marry home</yellow> <dark_gray>-</dark_gray> <gray>Teleport
 help-chat: "<yellow>/marry chat [msg]</yellow> <dark_gray>-</dark_gray> <gray>Toggle or send private couple chat</gray>"
 help-stats: "<yellow>/marry stats</yellow> <dark_gray>-</dark_gray> <gray>View your marriage profile</gray>"
 help-gift: "<yellow>/marry gift</yellow> <dark_gray>-</dark_gray> <gray>Gift held item to your online partner</gray>"
+help-gender: "<yellow>/marry gender <male|female></yellow> <dark_gray>-</dark_gray> <gray>Set your player gender</gray>"
+help-check: "<yellow>/marry check <player></yellow> <dark_gray>-</dark_gray> <gray>Check player's marriage profile</gray>"
+help-bank: "<yellow>/marry bank</yellow> <dark_gray>-</dark_gray> <gray>Open shared couple bank GUI</gray>"
+help-love: "<yellow>/marry love [tips]</yellow> <dark_gray>-</dark_gray> <gray>View EXP Love guide and statistics</gray>"
 help-divorce: "<yellow>/marry divorce</yellow> <dark_gray>-</dark_gray> <gray>End your current marriage</gray>"
+help-version: "<yellow>/marry version</yellow> <dark_gray>-</dark_gray> <gray>View plugin version and system status</gray>"
 help-footer: "<gradient:#ff758c:#ff7eb3>✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦</gradient><newline>"
+
+# Plugin Version (/marry version)
+version-card: "<newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━━ [ ClarityMarriage ] ━━━━━━━━━✦</gradient><newline><gray>• Version:</gray> <gold>v<version></gold><newline><gray>• Author:</gray> <white><author></white><newline><gray>• Server Platform:</gray> <yellow>Paper 1.21+ (Java 21/25)</yellow><newline><gray>• Storage Engine:</gray> <aqua><storage></aqua><newline><gray>• Vault Economy:</gray> <vault_status><newline><gray>• PlaceholderAPI:</gray> <papi_status><newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦</gradient><newline>"
+
+# Gender & Profile Status
+gender-select-prompt: "<yellow>Please choose your gender first: <blue><click:run_command:'/marry gender male'><hover:show_text:'<blue>Select Male ♂'>[Male ♂]</hover></click></blue> or <light_purple><click:run_command:'/marry gender female'><hover:show_text:'<light_purple>Select Female ♀'>[Female ♀]</hover></click></light_purple></yellow>"
+gender-set-success: "<green>Your gender has been set to <gold><gender></gold> <icon>!</green>"
+gender-invalid: "<red>Invalid gender! Please choose either <blue>male</blue> or <light_purple>female</light_purple>.</red>"
+gender-change-disabled: "<red>Changing gender is disabled on this server.</red>"
+gender-not-set: "<red>You must set your gender before you can marry or propose! Use <yellow>/marry gender <male|female></yellow>.</red>"
+target-gender-not-set: "<red><yellow><target></yellow> has not chosen their gender yet and cannot be married right now!</red>"
+divorce-cooldown-active: "<red>You are still in divorce cooldown! You cannot marry or propose for another <gold><time></gold>.</red>"
+target-divorce-cooldown: "<red><yellow><target></yellow> is currently on divorce cooldown and cannot receive proposals for another <gold><time></gold>.</red>"
+
+# Player Status Profile (/marry check or /marry status <player>)
+status-card-single: "<newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━━ [ Player Profile ] ━━━━━━━━━✦</gradient><newline><gray>• Player:</gray> <white><target></white><newline><gray>• Gender:</gray> <gender_display><newline><gray>• Status:</gray> <green>Single</green><divorce_cooldown_line><newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦</gradient><newline>"
+status-card-married: "<newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━━ [ Player Profile ] ━━━━━━━━━✦</gradient><newline><gray>• Player:</gray> <white><target></white><newline><gray>• Gender:</gray> <gender_display><newline><gray>• Status:</gray> <#ff69b4>Married</#ff69b4> to <partner> <partner_icon><newline><gray>• Wedding Date:</gray> <white><date></white><newline><gray>• Duration:</gray> <yellow><married_time></yellow><newline><gray>• EXP Love:</gray> <gold><love_exp></gold><newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦</gradient><newline>"
+status-divorce-cooldown: "<newline><gray>• Divorce Cooldown:</gray> <red><time></red>"
+
+# Bank & Economy Messages
+bank-disabled: "<red>Marriage bank system is currently disabled.</red>"
+bank-no-economy: "<red>Vault economy was not found! Bank features are unavailable.</red>"
+bank-deposit-success: "<green>Successfully deposited <gold><amount></gold> into couple bank! New balance: <gold><balance></gold></green>"
+bank-withdraw-success: "<green>Successfully withdrew <gold><amount></gold> from couple bank! New balance: <gold><balance></gold></green>"
+bank-partner-deposit: "<#ff69b4>❤ <partner> deposited <gold><amount></gold> into couple bank!</#ff69b4>"
+bank-partner-withdraw: "<#ff69b4>❤ <partner> withdrew <gold><amount></gold> from couple bank!</#ff69b4>"
+bank-not-enough-money: "<red>You don't have enough money in your wallet! (Your balance: <gold><balance></gold>)</red>"
+bank-not-enough-bank: "<red>There is not enough money in the couple bank! (Bank balance: <gold><balance></gold>)</red>"
+bank-limit-reached: "<red>Deposit failed! Cannot exceed bank limit of <gold><limit></gold>. Current bank: <gold><current></gold>. Upgrade your limit with EXP Love!</red>"
+bank-upgrade-success: "<newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━ [ BANK UPGRADE ] ━━━━━━━━✦</gradient><newline>   <gold>❤ Couple Bank upgraded to <bold>Level <level></bold>!</gold><newline>   <yellow>Deposit limit increased to: <green><limit></green>!</yellow><newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦</gradient><newline>"
+bank-not-enough-exp: "<red>Not enough EXP Love! Upgrading to Level <level> requires <gold><cost> EXP Love</gold> (You have: <yellow><current></yellow>).</red>"
+bank-prompt-deposit: "<yellow>Enter the amount to <b>deposit</b> in chat (or type 'cancel'):</yellow>"
+bank-prompt-withdraw: "<yellow>Enter the amount to <b>withdraw</b> in chat (or type 'cancel'):</yellow>"
+bank-prompt-invalid: "<red>Invalid number amount! Transaction cancelled.</red>"
+bank-prompt-cancelled: "<gray>Bank transaction cancelled.</gray>"
+
+# EXP Love Messages
+love-exp-gain: "<#ff69b4>❤ +<amount> EXP Love <gray>(<reason>)</gray>! Total: <yellow><total></yellow></#ff69b4>"
+love-kiss-success: "<#ff69b4>❤ You gave a sweet kiss to <partner>! (+<amount> EXP Love)</#ff69b4>"
+love-kiss-partner: "<#ff69b4>❤ <partner> gave you a sweet kiss! (+<amount> EXP Love)</#ff69b4>"
+love-kiss-cooldown: "<red>You can only kiss your partner again in <gold><time></gold>s!</red>"
+
+# EXP Love Guide / Tips Command
+love-guide: "<newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━━━ [ EXP Love Guide & Tips ] ━━━━━━━━━━✦</gradient><newline><gold>❤ Current EXP Love: <yellow><love_exp></yellow> | Bank Level: <yellow><bank_level></yellow> (Limit: <green><bank_limit></green>)</gold><newline><gray>Earn EXP Love together to unlock unlimited Bank Deposit upgrades!</gray><newline><newline><yellow>1. Playtime Proximity:</yellow> <gray>Stay within 5 blocks of your partner for 10 min <green>(+50 EXP)</green></gray><newline><yellow>2. Hunting Together:</yellow> <gray>Kill mobs within 5 blocks of your partner <green>(+3 EXP / +50 Boss)</green></gray><newline><yellow>3. Mining Together:</yellow> <gray>Mine ores while near your partner <green>(+2 EXP)</green></gray><newline><yellow>4. Fishing Together:</yellow> <gray>Catch fish while close to your partner <green>(+2 EXP)</green></gray><newline><yellow>5. Sleeping Together:</yellow> <gray>Pass the night in adjacent beds <green>(+25 EXP)</green></gray><newline><yellow>6. Sweet Kiss / Hug:</yellow> <gray>Shift + Right Click your partner <green>(+10 EXP)</green></gray><newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦</gradient><newline>"
 
 admin-help-header: "<newline><gold>✦━━━━━━ [ ClarityMarriage Admin ] ━━━━━━✦</gold>"
 admin-help-reload: "<yellow>/cmarry reload</yellow> <dark_gray>-</dark_gray> <gray>Reload plugin configs</gray>"

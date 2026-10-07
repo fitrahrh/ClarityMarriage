@@ -38,6 +38,10 @@ public class MarryTabCompleter implements TabCompleter {
             boolean isMarried = plugin.getMarriageManager().isMarried(player.getUniqueId());
 
             List<String> options = new ArrayList<>();
+            options.add("gender");
+            options.add("check");
+            options.add("status");
+            options.add("version");
             if (isMarried) {
                 options.add("tp");
                 options.add("sethome");
@@ -45,6 +49,11 @@ public class MarryTabCompleter implements TabCompleter {
                 options.add("chat");
                 options.add("stats");
                 options.add("gift");
+                options.add("bank");
+                options.add("love");
+                options.add("deposit");
+                options.add("withdraw");
+                options.add("upgrade");
                 options.add("divorce");
                 options.add("help");
             } else {
@@ -71,11 +80,14 @@ public class MarryTabCompleter implements TabCompleter {
             String sub = args[0].toLowerCase(Locale.ROOT);
             String current = args[1].toLowerCase(Locale.ROOT);
 
-            if ("divorce".equals(sub)) {
+            if ("gender".equals(sub)) {
+                if ("male".startsWith(current)) completions.add("male");
+                if ("female".startsWith(current)) completions.add("female");
+            } else if ("divorce".equals(sub)) {
                 if ("confirm".startsWith(current)) {
                     completions.add("confirm");
                 }
-            } else if ("stats".equals(sub)) {
+            } else if ("stats".equals(sub) || "status".equals(sub) || "check".equals(sub)) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (p.getName().toLowerCase(Locale.ROOT).startsWith(current)) {
                         completions.add(p.getName());

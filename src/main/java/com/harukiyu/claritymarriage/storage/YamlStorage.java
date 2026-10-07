@@ -2,6 +2,7 @@ package com.harukiyu.claritymarriage.storage;
 
 import com.harukiyu.claritymarriage.ClarityMarriage;
 import com.harukiyu.claritymarriage.models.Marriage;
+import com.harukiyu.claritymarriage.models.PlayerProfile;
 import com.harukiyu.claritymarriage.models.SharedHome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -91,7 +92,11 @@ public class YamlStorage implements MarriageStorage {
                         home = new SharedHome(world, x, y, z, yaw, pitch);
                     }
 
-                    list.add(new Marriage(id, p1, p2, date, playtime, home, pvp));
+                    double bankBalance = section.getDouble(key + ".bank.balance", 0.0);
+                    int bankLevel = section.getInt(key + ".bank.level", 1);
+                    long loveExp = section.getLong(key + ".love-exp", 0L);
+
+                    list.add(new Marriage(id, p1, p2, date, playtime, home, pvp, bankBalance, bankLevel, loveExp));
                 } catch (Exception e) {
                     plugin.getLogger().log(Level.WARNING, String.format("Failed to parse marriage record for key: %s", key), e);
                 }
@@ -133,6 +138,9 @@ public class YamlStorage implements MarriageStorage {
         config.set(path + ".marriage-date", marriage.getMarriageDate());
         config.set(path + ".playtime-seconds", marriage.getPlaytimeSeconds());
         config.set(path + ".pvp-enabled", marriage.isPvpEnabled());
+        config.set(path + ".bank.balance", marriage.getBankBalance());
+        config.set(path + ".bank.level", marriage.getBankLevel());
+        config.set(path + ".love-exp", marriage.getLoveExp());
 
         SharedHome home = marriage.getSharedHome();
         if (home != null) {
@@ -145,6 +153,51 @@ public class YamlStorage implements MarriageStorage {
         } else {
             config.set(path + ".home", null);
         }
+    }
+
+    @Override
+    public CompletableFuture<List<PlayerProfile>> loadAllProfiles() {
+        return CompletableFuture.supplyAsync(() -> {
+            List<PlayerProfile> list = new ArrayList<>();
+            this.config = YamlConfiguration.loadConfiguration(dataFile);
+            ConfigurationSection section = config.getConfigurationSection("profiles");
+            if (section == null) return list;
+
+            for (String key : section.getKeys(false)) {
+                try {
+                    UUID uuid = UUID.fromString(key);
+                    String genderStr = section.getString(key + ".gender", "NONE");
+                    com.harukiyu.claritymarriage.models.Gender gender = com.harukiyu.claritymarriage.models.Gender.fromString(genderStr);
+                    long cooldown = section.getLong(key + ".divorce-cooldown-until", 0L);
+                    list.add(new PlayerProfile(uuid, gender, cooldown));
+                } catch (Exception e) {
+                    plugin.getLogger().log(Level.WARNING, String.format("Failed to parse profile record for key: %s", key), e);
+                }
+            }
+            return list;
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<Void> saveProfile(PlayerProfile profile) {
+        return CompletableFuture.runAsync(() -> {
+            String path = "profiles." + profile.getUuid().toString();
+            config.set(path + ".gender", profile.getGender().name());
+            config.set(path + ".divorce-cooldown-until", profile.getDivorceCooldownUntil());
+            saveToFile();
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<Void> saveAllProfiles(Collection<PlayerProfile> profiles) {
+        return CompletableFuture.runAsync(() -> {
+            for (PlayerProfile profile : profiles) {
+                String path = "profiles." + profile.getUuid().toString();
+                config.set(path + ".gender", profile.getGender().name());
+                config.set(path + ".divorce-cooldown-until", profile.getDivorceCooldownUntil());
+            }
+            saveToFile();
+        }, executor);
     }
 
     private synchronized void saveToFile() {

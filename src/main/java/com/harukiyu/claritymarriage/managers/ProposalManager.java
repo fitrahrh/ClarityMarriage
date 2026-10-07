@@ -2,6 +2,7 @@ package com.harukiyu.claritymarriage.managers;
 
 import com.harukiyu.claritymarriage.ClarityMarriage;
 import com.harukiyu.claritymarriage.models.Proposal;
+import com.harukiyu.claritymarriage.utils.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -44,6 +45,33 @@ public class ProposalManager {
     public boolean sendProposal(Player sender, Player receiver) {
         UUID sUuid = sender.getUniqueId();
         UUID rUuid = receiver.getUniqueId();
+
+        // Check divorce cooldown for sender
+        if (plugin.getProfileManager().isInDivorceCooldown(sUuid)) {
+            long remaining = plugin.getProfileManager().getRemainingDivorceCooldownSeconds(sUuid);
+            plugin.getLanguageManager().sendMessage(sender, "divorce-cooldown-active", "time", TimeUtil.formatDuration(remaining));
+            return false;
+        }
+
+        // Check divorce cooldown for receiver
+        if (plugin.getProfileManager().isInDivorceCooldown(rUuid)) {
+            long remaining = plugin.getProfileManager().getRemainingDivorceCooldownSeconds(rUuid);
+            plugin.getLanguageManager().sendMessage(sender, "target-divorce-cooldown", "target", receiver.getName(), "time", TimeUtil.formatDuration(remaining));
+            return false;
+        }
+
+        // Check gender requirements
+        if (plugin.getConfigManager().isRequireGender()) {
+            if (!plugin.getProfileManager().hasGender(sUuid)) {
+                plugin.getLanguageManager().sendMessage(sender, "gender-not-set");
+                plugin.getLanguageManager().sendRawMessage(sender, "gender-select-prompt");
+                return false;
+            }
+            if (!plugin.getProfileManager().hasGender(rUuid)) {
+                plugin.getLanguageManager().sendMessage(sender, "target-gender-not-set", "target", receiver.getName());
+                return false;
+            }
+        }
 
         // Check proposal cooldown
         int cooldownSeconds = plugin.getConfigManager().getProposalCooldown();
@@ -102,6 +130,33 @@ public class ProposalManager {
         if (sender == null || !sender.isOnline()) {
             plugin.getLanguageManager().sendMessage(receiver, "player-not-found", "target", "Proposer");
             return false;
+        }
+
+        // Check divorce cooldown for receiver
+        if (plugin.getProfileManager().isInDivorceCooldown(rUuid)) {
+            long remaining = plugin.getProfileManager().getRemainingDivorceCooldownSeconds(rUuid);
+            plugin.getLanguageManager().sendMessage(receiver, "divorce-cooldown-active", "time", TimeUtil.formatDuration(remaining));
+            return false;
+        }
+
+        // Check divorce cooldown for sender
+        if (plugin.getProfileManager().isInDivorceCooldown(sender.getUniqueId())) {
+            long remaining = plugin.getProfileManager().getRemainingDivorceCooldownSeconds(sender.getUniqueId());
+            plugin.getLanguageManager().sendMessage(receiver, "target-divorce-cooldown", "target", sender.getName(), "time", TimeUtil.formatDuration(remaining));
+            return false;
+        }
+
+        // Check gender requirements
+        if (plugin.getConfigManager().isRequireGender()) {
+            if (!plugin.getProfileManager().hasGender(rUuid)) {
+                plugin.getLanguageManager().sendMessage(receiver, "gender-not-set");
+                plugin.getLanguageManager().sendRawMessage(receiver, "gender-select-prompt");
+                return false;
+            }
+            if (!plugin.getProfileManager().hasGender(sender.getUniqueId())) {
+                plugin.getLanguageManager().sendMessage(receiver, "target-gender-not-set", "target", sender.getName());
+                return false;
+            }
         }
 
         // Double-check if either player married in the meantime

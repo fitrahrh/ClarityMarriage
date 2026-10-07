@@ -1,8 +1,10 @@
 package com.harukiyu.claritymarriage.listeners;
 
 import com.harukiyu.claritymarriage.ClarityMarriage;
+import com.harukiyu.claritymarriage.managers.BankManager;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,7 +13,7 @@ import org.bukkit.event.Listener;
 import java.util.UUID;
 
 /**
- * Intercepts AsyncChatEvent to route chat into private couple channel when toggled.
+ * Intercepts AsyncChatEvent to handle bank amount prompts and private couple chat channels.
  */
 public class PlayerChatListener implements Listener {
 
@@ -25,12 +27,48 @@ public class PlayerChatListener implements Listener {
     public void onAsyncChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
+        String rawMessage = PlainTextComponentSerializer.plainText().serialize(event.message()).trim();
 
+        // 1. Handle bank deposit/withdraw prompts
+        if (plugin.getBankManager().isPromptActive(uuid)) {
+            event.setCancelled(true);
+            BankManager.PromptAction prompt = plugin.getBankManager().getPrompt(uuid);
+            plugin.getBankManager().removePrompt(uuid);
+
+            if (rawMessage.equalsIgnoreCase("cancel")) {
+                plugin.getLanguageManager().sendMessage(player, "bank-prompt-cancelled");
+                Bukkit.getScheduler().runTask(plugin, () -> plugin.getBankGui().open(player));
+                return;
+            }
+
+            try {
+                double amount = Double.parseDouble(rawMessage.replace(",", "").replace("$", ""));
+                if (amount <= 0) {
+                    plugin.getLanguageManager().sendMessage(player, "bank-prompt-invalid");
+                    Bukkit.getScheduler().runTask(plugin, () -> plugin.getBankGui().open(player));
+                    return;
+                }
+
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    if (prompt.type() == BankManager.PromptType.DEPOSIT) {
+                        plugin.getBankManager().deposit(player, amount);
+                    } else if (prompt.type() == BankManager.PromptType.WITHDRAW) {
+                        plugin.getBankManager().withdraw(player, amount);
+                    }
+                    plugin.getBankGui().open(player);
+                });
+            } catch (NumberFormatException e) {
+                plugin.getLanguageManager().sendMessage(player, "bank-prompt-invalid");
+                Bukkit.getScheduler().runTask(plugin, () -> plugin.getBankGui().open(player));
+            }
+            return;
+        }
+
+        // 2. Handle private couple chat
         if (!plugin.getChatManager().isChatEnabled(uuid)) {
             return;
         }
 
-        // Intercept message for couple chat
         event.setCancelled(true);
 
         Player partner = plugin.getMarriageManager().getPartnerPlayer(uuid);
@@ -40,7 +78,6 @@ public class PlayerChatListener implements Listener {
             return;
         }
 
-        String rawMessage = PlainTextComponentSerializer.plainText().serialize(event.message());
         plugin.getChatManager().sendCoupleMessage(player, partner, rawMessage);
     }
 }

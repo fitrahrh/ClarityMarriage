@@ -1,0 +1,167 @@
+# ============================================================== #
+#                   ClarityMarriage Bank GUI                     #
+# ============================================================== #
+# Customize inventory title, size, items, slots, names, and lore.
+# Color formatting supports Adventure MiniMessage (e.g. <gradient:#hex1:#hex2>Text</gradient>, <green>, <gold>)
+
+title: "<gradient:#ff758c:#ff7eb3><b>❤ Couple Bank & Vault ❤</b></gradient>"
+# Size must be a multiple of 9 (e.g., 27, 36, 45, 54)
+size: 45
+
+# Background border filler panes
+border:
+  enabled: true
+  material: "MAGENTA_STAINED_GLASS_PANE"
+  name: "<gray> </gray>"
+  # Border slots to fill
+  slots:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 17
+    - 18
+    - 26
+    - 27
+    - 35
+    - 36
+    - 37
+    - 38
+    - 39
+    - 41
+    - 42
+    - 43
+    - 44
+
+items:
+  # 1. Couple Vault Overview (Player Head)
+  # Available Placeholders: <partner>, <balance>, <limit>, <level>, <wallet>, <love_exp>
+  overview:
+    slot: 4
+    material: "PLAYER_HEAD"
+    name: "<gradient:#ff758c:#ff7eb3><b>Couple Vault Overview</b></gradient>"
+    lore:
+      - "<gray>• Spouse: <#ff69b4><partner></#ff69b4>"
+      - "<gray>• Vault Balance: <gold><b><balance></b></gold>"
+      - "<gray>• Deposit Limit: <green><limit></green> <yellow>(Level <level>)</yellow>"
+      - "<gray>• Your Wallet: <yellow><wallet></yellow>"
+      - "<gray>• Shared EXP Love: <light_purple><b><love_exp> ❤</b></light_purple>"
+
+  # 2. Deposit Buttons
+  deposit-1:
+    slot: 10
+    amount: 10000.0
+    material: "EMERALD"
+    name: "<green><b>Deposit $10,000</b></green>"
+    lore:
+      - "<gray>Click to deposit <gold>$10,000</gold> into the bank.</gray>"
+
+  deposit-2:
+    slot: 11
+    amount: 50000.0
+    material: "EMERALD"
+    name: "<green><b>Deposit $50,000</b></green>"
+    lore:
+      - "<gray>Click to deposit <gold>$50,000</gold> into the bank.</gray>"
+
+  deposit-3:
+    slot: 12
+    amount: 100000.0
+    material: "EMERALD"
+    name: "<green><b>Deposit $100,000</b></green>"
+    lore:
+      - "<gray>Click to deposit <gold>$100,000</gold> into the bank.</gray>"
+
+  deposit-all:
+    slot: 13
+    material: "GOLD_BLOCK"
+    name: "<gold><b>Deposit All / Max</b></gold>"
+    lore:
+      - "<gray>Deposit your entire balance up to the vault limit.</gray>"
+
+  deposit-custom:
+    slot: 14
+    material: "PAPER"
+    name: "<yellow><b>Deposit Custom Amount</b></yellow>"
+    lore:
+      - "<gray>Type any exact custom amount in chat to deposit.</gray>"
+
+  # 3. Withdraw Buttons
+  withdraw-1:
+    slot: 19
+    amount: 10000.0
+    material: "REDSTONE"
+    name: "<red><b>Withdraw $10,000</b></red>"
+    lore:
+      - "<gray>Click to withdraw <gold>$10,000</gold> from the bank.</gray>"
+
+  withdraw-2:
+    slot: 20
+    amount: 50000.0
+    material: "REDSTONE"
+    name: "<red><b>Withdraw $50,000</b></red>"
+    lore:
+      - "<gray>Click to withdraw <gold>$50,000</gold> from the bank.</gray>"
+
+  withdraw-3:
+    slot: 21
+    amount: 100000.0
+    material: "REDSTONE"
+    name: "<red><b>Withdraw $100,000</b></red>"
+    lore:
+      - "<gray>Click to withdraw <gold>$100,000</gold> from the bank.</gray>"
+
+  withdraw-all:
+    slot: 22
+    material: "REDSTONE_BLOCK"
+    name: "<dark_red><b>Withdraw All</b></dark_red>"
+    lore:
+      - "<gray>Withdraw the entire vault balance into your wallet.</gray>"
+
+  withdraw-custom:
+    slot: 23
+    material: "PAPER"
+    name: "<yellow><b>Withdraw Custom Amount</b></yellow>"
+    lore:
+      - "<gray>Type any exact custom amount in chat to withdraw.</gray>"
+
+  # 4. Upgrade Limit Button
+  # Placeholders: <limit>, <level>, <next_limit>, <next_level>, <cost>, <love_exp>, <status_message>
+  upgrade-limit:
+    slot: 31
+    material: "NETHER_STAR"
+    name: "<gradient:#ff758c:#ff7eb3><b>⭐ UPGRADE BANK LIMIT ⭐</b></gradient>"
+    lore:
+      - "<gray>Increase your couple bank capacity without limits!</gray>"
+      - "<gray>• Current Limit: <gold><limit></gold> <gray>(Level <level>)</gray>"
+      - "<gray>• Next Limit: <green><next_limit></green> <yellow>(Level <next_level>)</yellow>"
+      - "<gray>• Upgrade Cost: <light_purple><b><cost> EXP Love</b></light_purple>"
+      - "<gray>• Your EXP Love: <love_exp_color><love_exp> EXP Love</gray>"
+      - ""
+      - "<status_message>"
+    status-ready: "<green>✔ Click to Upgrade Bank Limit!</green>"
+    status-not-enough: "<red>✘ Not enough EXP Love! (Earn with partner)</red>"
+
+  # 5. EXP Love Tips Guide Button
+  love-tips:
+    slot: 33
+    material: "BOOK"
+    name: "<gold><b>📖 How to Earn EXP Love?</b></gold>"
+    lore:
+      - "<gray>Click to view all ways to get EXP Love in chat!</gray>"
+      - "<gray>• Play together within 5 blocks</gray>"
+      - "<gray>• Hunt mobs together</gray>"
+      - "<gray>• Mine ores & fish side-by-side</gray>"
+      - "<gray>• Sweet kiss & pass the night together</gray>"
+
+  # 6. Close Button
+  close:
+    slot: 40
+    material: "BARRIER"
+    name: "<red><b>Close</b></red>"
+    lore: []
