@@ -1,0 +1,191 @@
+package com.harukiyu.claritymarriage;
+
+import com.harukiyu.claritymarriage.commands.AdminCommand;
+import com.harukiyu.claritymarriage.commands.MarryCommand;
+import com.harukiyu.claritymarriage.commands.MarryTabCompleter;
+import com.harukiyu.claritymarriage.hooks.MarriagePlaceholderExpansion;
+import com.harukiyu.claritymarriage.listeners.PlayerChatListener;
+import com.harukiyu.claritymarriage.listeners.PlayerConnectionListener;
+import com.harukiyu.claritymarriage.listeners.PlayerDamageListener;
+import com.harukiyu.claritymarriage.listeners.PlayerMoveListener;
+import com.harukiyu.claritymarriage.managers.ChatManager;
+import com.harukiyu.claritymarriage.managers.ConfigManager;
+import com.harukiyu.claritymarriage.managers.LanguageManager;
+import com.harukiyu.claritymarriage.managers.MarriageManager;
+import com.harukiyu.claritymarriage.managers.PlaytimeManager;
+import com.harukiyu.claritymarriage.managers.ProposalManager;
+import com.harukiyu.claritymarriage.managers.TeleportManager;
+import com.harukiyu.claritymarriage.storage.StorageManager;
+import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Level;
+
+/**
+ * Main plugin class for ClarityMarriage.
+ */
+public class ClarityMarriage extends JavaPlugin {
+
+    private static ClarityMarriage instance;
+
+    private ConfigManager configManager;
+    private LanguageManager languageManager;
+    private StorageManager storageManager;
+    private MarriageManager marriageManager;
+    private ProposalManager proposalManager;
+    private TeleportManager teleportManager;
+    private ChatManager chatManager;
+    private PlaytimeManager playtimeManager;
+    private MarriagePlaceholderExpansion placeholderExpansion;
+
+    public static ClarityMarriage getInstance() {
+        return instance;
+    }
+
+    @Override
+    public void onEnable() {
+        instance = this;
+
+        long startTime = System.currentTimeMillis();
+        getLogger().info("Starting ClarityMarriage initialization...");
+
+        // 1. Initialize configuration and messages
+        this.configManager = new ConfigManager(this);
+        this.configManager.load();
+
+        this.languageManager = new LanguageManager(this);
+        this.languageManager.load();
+
+        // 2. Initialize storage and load marriages
+        this.storageManager = new StorageManager(this);
+        this.storageManager.init();
+
+        this.marriageManager = new MarriageManager(this);
+        this.marriageManager.load();
+
+        // 3. Initialize feature managers
+        this.proposalManager = new ProposalManager(this);
+        this.proposalManager.start();
+
+        this.teleportManager = new TeleportManager(this);
+        this.chatManager = new ChatManager(this);
+
+        this.playtimeManager = new PlaytimeManager(this);
+        this.playtimeManager.start();
+
+        // 4. Register event listeners
+        registerListeners();
+
+        // 5. Register commands
+        registerCommands();
+
+        // 6. Optional PlaceholderAPI Hook
+        registerPlaceholderApi();
+
+        long elapsed = System.currentTimeMillis() - startTime;
+        getLogger().info(String.format("ClarityMarriage v%s successfully enabled in %dms!", getPluginMeta().getVersion(), elapsed));
+    }
+
+    @Override
+    public void onDisable() {
+        getLogger().info("Disabling ClarityMarriage...");
+
+        // Unregister PlaceholderAPI
+        if (placeholderExpansion != null) {
+            placeholderExpansion.unregister();
+            placeholderExpansion = null;
+        }
+
+        // Stop tasks
+        if (proposalManager != null) {
+            proposalManager.stop();
+        }
+        if (playtimeManager != null) {
+            playtimeManager.stop();
+        }
+
+        // Save active data
+        if (marriageManager != null) {
+            marriageManager.saveAll();
+        }
+
+        // Close database/storage connection
+        if (storageManager != null) {
+            storageManager.close();
+        }
+
+        instance = null;
+        getLogger().info("ClarityMarriage disabled successfully.");
+    }
+
+    private void registerListeners() {
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new PlayerConnectionListener(this), this);
+        pm.registerEvents(new PlayerChatListener(this), this);
+        pm.registerEvents(new PlayerDamageListener(this), this);
+        pm.registerEvents(new PlayerMoveListener(this), this);
+    }
+
+    private void registerCommands() {
+        PluginCommand marryCmd = getCommand("marry");
+        if (marryCmd != null) {
+            MarryCommand cmdExecutor = new MarryCommand(this);
+            marryCmd.setExecutor(cmdExecutor);
+            marryCmd.setTabCompleter(new MarryTabCompleter(this));
+        } else {
+            getLogger().log(Level.SEVERE, "Failed to register /marry command! Check plugin.yml");
+        }
+
+        PluginCommand adminCmd = getCommand("claritymarriage");
+        if (adminCmd != null) {
+            AdminCommand adminExecutor = new AdminCommand(this);
+            adminCmd.setExecutor(adminExecutor);
+            adminCmd.setTabCompleter(adminExecutor);
+        } else {
+            getLogger().log(Level.SEVERE, "Failed to register /claritymarriage command! Check plugin.yml");
+        }
+    }
+
+    private void registerPlaceholderApi() {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            this.placeholderExpansion = new MarriagePlaceholderExpansion(this);
+            if (this.placeholderExpansion.register()) {
+                getLogger().info("Hooked into PlaceholderAPI successfully!");
+            }
+        }
+    }
+
+    public ConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    public LanguageManager getLanguageManager() {
+        return languageManager;
+    }
+
+    public StorageManager getStorageManager() {
+        return storageManager;
+    }
+
+    public MarriageManager getMarriageManager() {
+        return marriageManager;
+    }
+
+    public ProposalManager getProposalManager() {
+        return proposalManager;
+    }
+
+    public TeleportManager getTeleportManager() {
+        return teleportManager;
+    }
+
+    public ChatManager getChatManager() {
+        return chatManager;
+    }
+
+    public PlaytimeManager getPlaytimeManager() {
+        return playtimeManager;
+    }
+}

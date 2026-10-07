@@ -1,0 +1,49 @@
+name: ClarityMarriage
+version: '${project.version}'
+main: com.harukiyu.claritymarriage.ClarityMarriage
+api-version: '1.21'
+author: Harukiyu
+description: Lightweight, modern, and lag-free Minecraft marriage plugin for Paper 1.21+
+softdepend:
+  - PlaceholderAPI
+
+commands:
+  marry:
+    description: Main marriage command
+    aliases:
+      - marriage
+    usage: /<command> [subcommand]
+    permission: claritymarriage.use
+  claritymarriage:
+    description: Admin commands for ClarityMarriage
+    aliases:
+      - claritymarry
+      - cmarry
+    usage: /<command> [subcommand]
+    permission: claritymarriage.admin
+
+permissions:
+  claritymarriage.use:
+    description: Allows players to use marriage commands
+    default: true
+  claritymarriage.tp:
+    description: Allows players to teleport to their partner
+    default: true
+  claritymarriage.tp.bypass:
+    description: Allows players to bypass teleport cooldown and warmup
+    default: op
+  claritymarriage.home:
+    description: Allows players to set and visit shared couple homes
+    default: true
+  claritymarriage.chat:
+    description: Allows players to use private couple chat
+    default: true
+  claritymarriage.gift:
+    description: Allows players to gift items to their partner
+    default: true
+  claritymarriage.stats:
+    description: Allows players to view marriage profiles
+    default: true
+  claritymarriage.admin:
+    description: Allows access to administrative marriage commands
+    default: op

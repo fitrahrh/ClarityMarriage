@@ -1,0 +1,108 @@
+# ============================================================== #
+#                    ClarityMarriage Language                    #
+# ============================================================== #
+# Color formatting uses Adventure MiniMessage:
+# E.g. <gradient:#ff758c:#ff7eb3>Text</gradient>, <red>, <gold>, <#ff69b4>, <bold>, <italic>
+
+prefix: "<gradient:#ff758c:#ff7eb3>[ClarityMarriage]</gradient> <dark_gray>»</dark_gray> "
+
+# General & Permissions
+no-permission: "<red>You do not have permission to use this command.</red>"
+only-players: "<red>This command can only be executed by in-game players.</red>"
+player-not-found: "<red>Player <yellow><target></yellow> was not found or is offline.</red>"
+not-married: "<red>You are not currently married! Use <yellow>/marry <player></yellow> to propose.</red>"
+target-not-married: "<red><target> is not married to anyone.</red>"
+already-married: "<red>You are already married to <#ff69b4><partner></#ff69b4>!</red>"
+target-already-married: "<red><yellow><target></yellow> is already married!</red>"
+cannot-propose-self: "<red>You cannot marry yourself!</red>"
+
+# Proposal
+proposal-sent: "<green>You proposed to <#ff69b4><target></#ff69b4>! Waiting for their response...</green>"
+proposal-received: "<newline><gradient:#ff758c:#ff7eb3>❤ <bold><sender></bold> has proposed to marry you! ❤</gradient><newline><gray>Click below or type </gray><yellow>/marry accept</yellow><gray> or </gray><yellow>/marry deny</yellow>:"
+proposal-buttons: "<gray>[ </gray><green><bold><click:run_command:'/marry accept'><hover:show_text:'<green>Click to accept marriage proposal'>ACCEPT</hover></click></bold></green><gray> | </gray><red><bold><click:run_command:'/marry deny'><hover:show_text:'<red>Click to decline proposal'>DECLINE</hover></click></bold></red><gray> ]</gray><newline>"
+proposal-denied-sender: "<red><target> declined your proposal.</red>"
+proposal-denied-receiver: "<yellow>You declined the marriage proposal from <sender>.</yellow>"
+proposal-expired-sender: "<red>Your proposal to <target> has expired.</red>"
+proposal-expired-receiver: "<red>The proposal from <sender> has expired.</red>"
+proposal-already-pending: "<red>You already sent a proposal! Please wait for it to be answered or expire.</red>"
+proposal-target-pending: "<red><yellow><target></yellow> already has a pending proposal from someone else.</red>"
+proposal-cooldown: "<red>Please wait <gold><time></gold> seconds before sending another proposal.</red>"
+no-pending-proposal: "<red>You do not have any pending marriage proposals.</red>"
+
+# Wedding Announcement
+married-success: "<gradient:#ff758c:#ff7eb3>❤ Congratulations! You and <partner> are now happily married! ❤</gradient>"
+broadcast-marriage: "<newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━━━━━━ [ WEDDING CELEBRATION ] ━━━━━━━━━━━━━✦</gradient><newline>   <gold>❤ <bold><player1></bold> and <bold><player2></bold> just tied the knot! ❤</gold><newline>   <yellow>Wishing them endless adventures and eternal love!</yellow><newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦</gradient><newline>"
+
+# Divorce
+divorce-confirm-prompt: "<yellow>Are you sure you want to divorce <#ff69b4><partner></#ff69b4>?</yellow><newline><gray>Click </gray><red><bold><click:run_command:'/marry divorce confirm'><hover:show_text:'<red>Click here to confirm divorce'>[CONFIRM DIVORCE]</hover></click></bold></red><gray> or type </gray><yellow>/marry divorce confirm</yellow><gray> within 15s to confirm.</gray>"
+divorce-cancelled: "<green>Divorce was cancelled.</green>"
+divorced-self: "<red>You have divorced <#ff69b4><partner></#ff69b4>.</red>"
+divorced-partner: "<red>Your spouse <#ff69b4><player></#ff69b4> has divorced you.</red>"
+broadcast-divorce: "<gray>[ClarityMarriage] <#ff69b4><player1></#ff69b4> and <#ff69b4><player2></#ff69b4> have officially separated.</gray>"
+
+# Teleportation
+tp-partner-offline: "<red>Your partner is currently offline.</red>"
+tp-warmup: "<yellow>Teleporting to your partner in <gold><time></gold> seconds... Do not move!</yellow>"
+tp-cancelled-movement: "<red>Teleportation cancelled because you moved!</red>"
+tp-cancelled-damage: "<red>Teleportation cancelled because you took damage!</red>"
+tp-cancelled-combat: "<red>You cannot teleport while in combat! Wait <gold><time></gold>s.</red>"
+tp-cooldown: "<red>Teleport is on cooldown. Please wait <gold><time></gold>s.</red>"
+tp-success: "<green>Teleported to your partner!</green>"
+tp-unsafe: "<red>The destination is unsafe to teleport to!</red>"
+
+# Shared Home
+sethome-success: "<green>Shared couple home has been set at your current location!</green>"
+home-not-set: "<red>You and your partner haven't set a shared home yet! Use <yellow>/marry sethome</yellow>.</red>"
+home-warmup: "<yellow>Teleporting to shared home in <gold><time></gold> seconds... Do not move!</yellow>"
+home-success: "<green>Teleported to your shared couple home!</green>"
+
+# Couple Chat
+chat-toggled-on: "<green>Couple chat enabled. All your messages will now go directly to your partner.</green>"
+chat-toggled-off: "<yellow>Couple chat disabled. You are back in public chat.</yellow>"
+chat-partner-offline: "<red>Your partner is offline. Couple chat is unavailable.</red>"
+
+# Marriage Stats
+stats-card: "<newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━━ [ Marriage Profile ] ━━━━━━━━━✦</gradient><newline><gray>• Spouse:</gray> <#ff69b4><partner></#ff69b4> <partner_status><newline><gray>• Married Date:</gray> <white><date></white><newline><gray>• Married Duration:</gray> <yellow><married_time></yellow><newline><gray>• Shared Playtime:</gray> <gold><playtime></gold><newline><gray>• Shared Home:</gray> <home_status><newline><gradient:#ff758c:#ff7eb3>✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦</gradient><newline>"
+stats-partner-online: "<green>(Online)</green>"
+stats-partner-offline: "<gray>(Offline)</gray>"
+stats-home-set: "<green>Set (<world>)</green>"
+stats-home-not-set: "<red>Not Set</red>"
+
+# Gift Command
+gift-no-item: "<red>You must be holding an item in your main hand to send a gift!</red>"
+gift-partner-offline: "<red>Your partner must be online to receive your gift!</red>"
+gift-inventory-full-sender: "<red>Cannot send gift: <#ff69b4><partner></#ff69b4>'s inventory is completely full!</red>"
+gift-inventory-full-partner: "<yellow><#ff69b4><player></#ff69b4> tried to gift you <gold><amount>x <item></gold>, but your inventory is full!</yellow>"
+gift-sent: "<green>Successfully gifted <gold><amount>x <item></gold> to <#ff69b4><partner></#ff69b4>!</green>"
+gift-received: "<green><#ff69b4><player></#ff69b4> gave you a gift: <gold><amount>x <item></gold>!</green>"
+
+# Misc & Notifications
+pvp-blocked: "<red>❤ You cannot harm your partner!</red>"
+partner-joined: "<#ff69b4>❤ Your partner <partner> has just joined the game! ❤</#ff69b4>"
+
+# Admin Messages
+admin-reload: "<green>ClarityMarriage configuration and language files reloaded successfully!</green>"
+admin-force-marry: "<green>Successfully forced marriage between <player1> and <player2>!</green>"
+admin-force-divorce: "<yellow>Successfully forced divorce for <player1> and <player2>!</yellow>"
+admin-info: "<newline><gold>--- Admin Marriage Info: <player> ---</gold><newline><gray>Partner:</gray> <partner><newline><gray>Date:</gray> <date><newline><gray>Playtime:</gray> <playtime><newline>"
+
+# Help Menu
+help-header: "<newline><gradient:#ff758c:#ff7eb3>✦━━━━━━ [ ClarityMarriage Help ] ━━━━━━✦</gradient>"
+help-marry: "<yellow>/marry <player></yellow> <dark_gray>-</dark_gray> <gray>Propose to another player</gray>"
+help-accept: "<yellow>/marry accept</yellow> <dark_gray>-</dark_gray> <gray>Accept a marriage proposal</gray>"
+help-deny: "<yellow>/marry deny</yellow> <dark_gray>-</dark_gray> <gray>Decline a marriage proposal</gray>"
+help-tp: "<yellow>/marry tp</yellow> <dark_gray>-</dark_gray> <gray>Teleport to your partner</gray>"
+help-sethome: "<yellow>/marry sethome</yellow> <dark_gray>-</dark_gray> <gray>Set shared couple home</gray>"
+help-home: "<yellow>/marry home</yellow> <dark_gray>-</dark_gray> <gray>Teleport to shared couple home</gray>"
+help-chat: "<yellow>/marry chat [msg]</yellow> <dark_gray>-</dark_gray> <gray>Toggle or send private couple chat</gray>"
+help-stats: "<yellow>/marry stats</yellow> <dark_gray>-</dark_gray> <gray>View your marriage profile</gray>"
+help-gift: "<yellow>/marry gift</yellow> <dark_gray>-</dark_gray> <gray>Gift held item to your online partner</gray>"
+help-divorce: "<yellow>/marry divorce</yellow> <dark_gray>-</dark_gray> <gray>End your current marriage</gray>"
+help-footer: "<gradient:#ff758c:#ff7eb3>✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦</gradient><newline>"
+
+admin-help-header: "<newline><gold>✦━━━━━━ [ ClarityMarriage Admin ] ━━━━━━✦</gold>"
+admin-help-reload: "<yellow>/cmarry reload</yellow> <dark_gray>-</dark_gray> <gray>Reload plugin configs</gray>"
+admin-help-marry: "<yellow>/cmarry forcemarry <p1> <p2></yellow> <dark_gray>-</dark_gray> <gray>Force marry two players</gray>"
+admin-help-divorce: "<yellow>/cmarry forcedivorce <player></yellow> <dark_gray>-</dark_gray> <gray>Force divorce a player</gray>"
+admin-help-info: "<yellow>/cmarry info <player></yellow> <dark_gray>-</dark_gray> <gray>View marriage info of a player</gray>"
+admin-help-footer: "<gold>✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦</gold><newline>"

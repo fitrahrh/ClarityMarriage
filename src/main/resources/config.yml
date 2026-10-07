@@ -1,0 +1,60 @@
+# ============================================================== #
+#                    ClarityMarriage Configuration               #
+# ============================================================== #
+
+# Storage mechanism: "SQLITE" or "YAML"
+# SQLITE is recommended for high performance and lag-free operation.
+storage:
+  type: "SQLITE"
+  sqlite:
+    file: "marriages.db"
+
+# Marriage core settings
+marriage:
+  # Proposal request expiry time in seconds
+  proposal-timeout: 60
+  # Cooldown between sending proposals in seconds
+  proposal-cooldown: 15
+  # Broadcast wedding announcement to the entire server
+  broadcast-on-marriage: true
+  # Broadcast divorce announcement to the entire server
+  broadcast-on-divorce: false
+  # Allow or disallow PvP damage between married partners (false = protected from friendly fire)
+  allow-pvp: false
+  # Notify partner when their spouse logs in
+  partner-join-notify: true
+
+# Teleportation (/marry tp & /marry home)
+teleport:
+  # Warmup delay in seconds before teleporting (0 to disable)
+  warmup-seconds: 3
+  # Cooldown in seconds after teleporting
+  cooldown-seconds: 30
+  # Cancel teleport if player moves during warmup
+  cancel-on-move: true
+  # Cancel teleport if player takes damage during warmup
+  cancel-on-damage: true
+  # Seconds after taking/dealing damage during which teleport is blocked (Combat Tag)
+  combat-tag-seconds: 10
+
+# Couple Chat settings (/marry chat)
+chat:
+  # Format uses MiniMessage
+  format: "<gradient:#ff758c:#ff7eb3>❤ [Couple] <sender>:</gradient> <white><message></white>"
+  # Play chime sound when receiving a couple chat message
+  play-sound: true
+  sound: "BLOCK_NOTE_BLOCK_CHIME"
+
+# Audio and visual effects
+effects:
+  play-sounds: true
+  spawn-particles: true
+  sounds:
+    marriage-success: "UI_TOAST_CHALLENGE_COMPLETE"
+    proposal-sent: "BLOCK_NOTE_BLOCK_BELL"
+    proposal-received: "BLOCK_NOTE_BLOCK_BELL"
+    proposal-denied: "ENTITY_VILLAGER_NO"
+    teleport-start: "BLOCK_PORTAL_TRIGGER"
+    teleport-success: "ENTITY_ENDERMAN_TELEPORT"
+    gift-success: "ENTITY_PLAYER_LEVELUP"
+    divorce: "BLOCK_BEACON_DEACTIVATE"
